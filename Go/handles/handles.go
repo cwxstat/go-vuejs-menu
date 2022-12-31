@@ -75,6 +75,28 @@ func GetType(f float32) string {
 	return "sell"
 }
 
+func CheckConn(ws *websocket.Conn) (<-chan string, <-chan bool) {
+	// Adding in receive here..
+	c := make(chan string)
+	done := make(chan bool)
+	go func() {
+		for {
+			msg := ""
+			err := websocket.Message.Receive(ws, &msg)
+			if err != nil {
+
+				fmt.Printf("Error: %s\n", err)
+				fmt.Printf("\n\n...closing connection\n")
+				close(done)
+				return
+
+			}
+			c <- msg
+		}
+	}()
+	return c, done
+}
+
 func Hello(c echo.Context) error {
 	websocket.Handler(func(ws *websocket.Conn) {
 		defer ws.Close()
@@ -85,6 +107,8 @@ func Hello(c echo.Context) error {
 			c.Logger().Error(err)
 		}
 		fmt.Printf("%s\n", msg)
+
+		cM, done := CheckConn(ws)
 		for {
 
 			// Write
@@ -97,6 +121,17 @@ func Hello(c echo.Context) error {
 				return
 
 			}
+
+			select {
+			case msg := <-cM:
+				fmt.Println("Send operation on cM", msg)
+			case <-done:
+				fmt.Println("Closing connection!!!")
+				return
+			default:
+
+			}
+
 			fmt.Printf("out: %s\n", result)
 			time.Sleep(2 * time.Second)
 		}
