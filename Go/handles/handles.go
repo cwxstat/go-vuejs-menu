@@ -18,9 +18,15 @@ type StatusData struct {
 	N    string `json:"n"`
 }
 
+type OptionsData struct {
+	ID   int    `json:"id"`
+	Text string `json:"text"`
+}
+
 type Status struct {
-	M []StatusData `json:"data"`
-	T string       `json:"type"`
+	M []StatusData  `json:"data"`
+	T string        `json:"type"`
+	O []OptionsData `json:"options"`
 }
 
 func GenStatus() []byte {
@@ -32,7 +38,16 @@ func GenStatus() []byte {
 		randomN := fmt.Sprintf("n %f", rand.Float32()*100)
 		m = append(m, StatusData{Name: "string", P: rand.Intn(100), Code: randomString, N: randomN})
 	}
-	n := &Status{M: m, T: "status"}
+
+	options := []OptionsData{{
+		ID:   0,
+		Text: "zero",
+	}, {
+		ID:   1,
+		Text: "One",
+	},
+	}
+	n := &Status{M: m, T: "status", O: options}
 	resultJson, _ := json.Marshal(n)
 
 	return resultJson
@@ -112,7 +127,10 @@ func Hello(c echo.Context) error {
 		for {
 
 			// Write
-			result := fmt.Sprintf("{%q: [{%q: %4.2f}, {%q: %4.2f}], %q: %q}", "data", "p", rand.Float32()*100, "p", rand.Float32()*100, "type", GetType(rand.Float32()*100))
+			result := fmt.Sprintf("{%q: [{%q: %4.2f}, {%q: %4.2f}], %q: %q, %q: [{%q: %d, %q: %q}]}",
+				"data", "p", rand.Float32()*100, "p", rand.Float32()*100,
+				"type", GetType(rand.Float32()*100),
+				"options", "id", 3, "text", "three")
 			err := websocket.Message.Send(ws, result)
 			if err != nil {
 				c.Logger().Error(err)

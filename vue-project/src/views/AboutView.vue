@@ -6,14 +6,11 @@
       References:
     </h3>
 
-    <a href="https://www.youtube.com/watch?v=H-hXNym2CK8">video 3</a>
-    <br />
-    <a href="https://youtu.be/GdWrYfDfqRE?t=6">video 4</a>
-    <br />
-    <a href="https://youtu.be/usSBsgWNUZk?t=9">video 5</a>
+
 
     <div class="AppDev">
 
+      <div v-if="value1">I'm rendered!</div>
 
 
       {{ name }}, {{ age }}
@@ -48,9 +45,15 @@ interface PArray {
   p: number;
 }
 
+interface OptionsArray {
+  id: number;
+  text: string;
+}
+
 interface DataObj {
   data: PArray[];
   type: string;
+  options: OptionsArray[];
 }
 
 
@@ -59,17 +62,19 @@ export default defineComponent({
   components: {},
   setup() {
 
+    const value1 = ref(false)
     const activeColor = ref('red')
     const fontSize = ref(15)
 
     // Define your own type.. DataObj
-    const obj = ref<DataObj>({ "data": [{ "p": 42.05 }, { "p": 40.68 }], "type": "buy" })
+    const obj = ref<DataObj>({ "data": [{ "p": 42.05 }, { "p": 40.68 }],
+      "type": "buy","options": [{ "id": 1, "text": "one" }, { "id": 2, "text": "two" }] })
 
     const name = ref('Susan');
     const msg = ref('msg');
     const age = ref<number | string>(60)
     const connection = ref<any>({});
-    return { name, age, connection, msg, activeColor, fontSize, obj }
+    return { name, age, connection, msg, activeColor, fontSize, obj, value1 }
   },
   beforeRouteLeave(to, from, next) {
     console.log('beforeRouteLeave... close websocket');
@@ -106,8 +111,13 @@ export default defineComponent({
       // Change color
       if (this.obj.type == "buy") {
         this.activeColor = "green"
+        if (this.obj.data[0].p > 40) {
+          this.value1 = true
+        }
+
       } else {
         this.activeColor = "red"
+        this.value1 = false
       }
 
     },
