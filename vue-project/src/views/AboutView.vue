@@ -6,14 +6,21 @@
       References:
     </h3>
 
-    <a href="https://www.youtube.com/watch?v=H-hXNym2CK8">video 3</a>
-    <br />
-    <a href="https://youtu.be/GdWrYfDfqRE?t=6">video 4</a>
-    <br />
-    <a href="https://youtu.be/usSBsgWNUZk?t=9">video 5</a>
+
 
     <div class="AppDev">
 
+      <div v-if="value1">
+
+        <select v-model="selected">
+          <option v-for="option in options" v-bind:value="option.id">
+            {{ option.text }}
+          </option>
+        </select>
+        <br><br>
+        <span>Selected: {{ selected }}</span>
+
+      </div>
 
 
       {{ name }}, {{ age }}
@@ -48,9 +55,15 @@ interface PArray {
   p: number;
 }
 
+interface Options {
+  id: number;
+  text: string;
+}
+
 interface DataObj {
   data: PArray[];
   type: string;
+  options: Options[];
 }
 
 
@@ -59,17 +72,23 @@ export default defineComponent({
   components: {},
   setup() {
 
+
+    const value1 = ref(false)
+    const options = ref<Options[]>([{ "id": 1, "text": "one" }, { "id": 2, "text": "two" }])
+    const selected = ref(1)
+
     const activeColor = ref('red')
     const fontSize = ref(15)
 
     // Define your own type.. DataObj
-    const obj = ref<DataObj>({ "data": [{ "p": 42.05 }, { "p": 40.68 }], "type": "buy" })
+    const obj = ref<DataObj>({ "data": [{ "p": 42.05 }, { "p": 40.68 }],
+      "type": "buy","options": [{ "id": 1, "text": "one" }, { "id": 2, "text": "two" }] })
 
     const name = ref('Susan');
     const msg = ref('msg');
     const age = ref<number | string>(60)
     const connection = ref<any>({});
-    return { name, age, connection, msg, activeColor, fontSize, obj }
+    return { name, age, connection, msg, activeColor, fontSize, obj, value1, options, selected }
   },
   beforeRouteLeave(to, from, next) {
     console.log('beforeRouteLeave... close websocket');
@@ -106,8 +125,14 @@ export default defineComponent({
       // Change color
       if (this.obj.type == "buy") {
         this.activeColor = "green"
+        if (this.obj.data[0].p > 40) {
+          this.value1 = true
+          this.options = this.obj.options
+        }
+
       } else {
         this.activeColor = "red"
+        this.value1 = false
       }
 
     },
