@@ -1,4 +1,4 @@
-# go-vuejs
+# go-vuejs-menu
 Go and Vuejs
 
 ## Step for getting started
