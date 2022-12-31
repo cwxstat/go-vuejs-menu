@@ -10,7 +10,17 @@
 
     <div class="AppDev">
 
-      <div v-if="value1">I'm rendered!</div>
+      <div v-if="value1">
+
+        <select v-model="selected">
+          <option v-for="option in options" v-bind:value="option.id">
+            {{ option.text }}
+          </option>
+        </select>
+        <br><br>
+        <span>Selected: {{ selected }}</span>
+
+      </div>
 
 
       {{ name }}, {{ age }}
@@ -45,7 +55,7 @@ interface PArray {
   p: number;
 }
 
-interface OptionsArray {
+interface Options {
   id: number;
   text: string;
 }
@@ -53,7 +63,7 @@ interface OptionsArray {
 interface DataObj {
   data: PArray[];
   type: string;
-  options: OptionsArray[];
+  options: Options[];
 }
 
 
@@ -62,7 +72,11 @@ export default defineComponent({
   components: {},
   setup() {
 
+
     const value1 = ref(false)
+    const options = ref<Options[]>([{ "id": 1, "text": "one" }, { "id": 2, "text": "two" }])
+    const selected = ref(1)
+
     const activeColor = ref('red')
     const fontSize = ref(15)
 
@@ -74,7 +88,7 @@ export default defineComponent({
     const msg = ref('msg');
     const age = ref<number | string>(60)
     const connection = ref<any>({});
-    return { name, age, connection, msg, activeColor, fontSize, obj, value1 }
+    return { name, age, connection, msg, activeColor, fontSize, obj, value1, options, selected }
   },
   beforeRouteLeave(to, from, next) {
     console.log('beforeRouteLeave... close websocket');
@@ -113,6 +127,7 @@ export default defineComponent({
         this.activeColor = "green"
         if (this.obj.data[0].p > 40) {
           this.value1 = true
+          this.options = this.obj.options
         }
 
       } else {
