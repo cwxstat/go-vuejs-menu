@@ -1,6 +1,7 @@
 package handles
 
 import (
+	"example.com/m/v2/data"
 	"fmt"
 	"math/rand"
 	"time"
@@ -127,10 +128,10 @@ func Hello(c echo.Context) error {
 		for {
 
 			// Write
-			result := fmt.Sprintf("{%q: [{%q: %4.2f}, {%q: %4.2f}], %q: %q, %q: [{%q: %d, %q: %q}]}",
+			result := fmt.Sprintf("{%q: [{%q: %4.2f}, {%q: %4.2f}], %q: %q, %q: %s}",
 				"data", "p", rand.Float32()*100, "p", rand.Float32()*100,
 				"type", GetType(rand.Float32()*100),
-				"options", "id", 3, "text", "three")
+				"options", data.GenOptions())
 			err := websocket.Message.Send(ws, result)
 			if err != nil {
 				c.Logger().Error(err)
