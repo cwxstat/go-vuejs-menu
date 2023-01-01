@@ -20,10 +20,6 @@ dev: ## npm run dev
 run: dist ## dist and run Go
 	@bash -c "cd Go; go run server.go"
 
-.PHONY: run-dev
-run-dev: dist ## dist and run Go
-	@bash -c "cd Go; go run server.go"
-
 
 .PHONY: docker
 docker: ## todo ... build docker image
