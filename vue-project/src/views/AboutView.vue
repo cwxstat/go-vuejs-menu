@@ -49,22 +49,9 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import axios from "axios";
+import type {DataObj, Options} from "@/types/DataObj";
 import { reactive } from 'vue'
 
-interface PArray {
-  p: number;
-}
-
-interface Options {
-  id: number;
-  text: string;
-}
-
-interface DataObj {
-  data: PArray[];
-  type: string;
-  options: Options[];
-}
 
 
 export default defineComponent({
@@ -80,7 +67,7 @@ export default defineComponent({
     const activeColor = ref('red')
     const fontSize = ref(15)
 
-    // Define your own type.. DataObj
+    // Define your own type, DataObj
     const obj = ref<DataObj>({ "data": [{ "p": 42.05 }, { "p": 40.68 }],
       "type": "buy","options": [{ "id": 1, "text": "one" }, { "id": 2, "text": "two" }] })
 
